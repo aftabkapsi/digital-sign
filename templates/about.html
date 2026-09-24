@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-7">
+
+        <div class="w-11 h-11 mx-auto rounded-xl
+                    bg-lavender-600
+                    flex items-center justify-center">
+
+            <i data-lucide="file-signature"
+               class="w-5 h-5 text-white"></i>
+
+        </div>
+
+        <h1 class="text-2xl font-semibold text-gray-900 mt-4">
+            About Digital Signature
+        </h1>
+
+        <p class="text-sm text-gray-500 mt-1 max-w-xl mx-auto">
+            A simple platform for digitally signing documents and
+            verifying their authenticity.
+        </p>
+
+    </div>
+
+
+    <!-- About -->
+    <div class="bg-white border border-lavender-200
+                rounded-xl p-6">
+
+        <div class="flex items-start gap-4">
+
+            <div class="w-9 h-9 rounded-lg
+                        bg-lavender-100
+                        flex items-center justify-center
+                        flex-shrink-0">
+
+                <i data-lucide="info"
+                   class="w-4 h-4 text-lavender-700"></i>
+
+            </div>
+
+            <div>
+
+                <h2 class="text-base font-semibold text-gray-900">
+                    What does it do?
+                </h2>
+
+                <p class="text-sm text-gray-500 leading-6 mt-2">
+                    The application allows users to sign documents digitally
+                    and later verify whether a document has been modified
+                    after signing.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- How it works -->
+    <div class="bg-white border border-lavender-200
+                rounded-xl p-6 mt-4">
+
+        <h2 class="text-base font-semibold text-gray-900">
+            How it works
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+
+            <!-- Signing -->
+            <div class="rounded-lg bg-lavender-50
+                        border border-lavender-100 p-4">
+
+                <div class="w-8 h-8 rounded-lg
+                            bg-white
+                            flex items-center justify-center">
+
+                    <i data-lucide="file-signature"
+                       class="w-4 h-4 text-lavender-700"></i>
+
+                </div>
+
+                <h3 class="text-sm font-semibold text-gray-800 mt-3">
+                    Signing
+                </h3>
+
+                <p class="text-xs text-gray-500 leading-5 mt-1">
+                    The document is hashed using SHA-256. The hash is then
+                    signed using the user's Ed25519 private key.
+                </p>
+
+            </div>
+
+
+            <!-- Verification -->
+            <div class="rounded-lg bg-lavender-50
+                        border border-lavender-100 p-4">
+
+                <div class="w-8 h-8 rounded-lg
+                            bg-white
+                            flex items-center justify-center">
+
+                    <i data-lucide="shield-check"
+                       class="w-4 h-4 text-lavender-700"></i>
+
+                </div>
+
+                <h3 class="text-sm font-semibold text-gray-800 mt-3">
+                    Verification
+                </h3>
+
+                <p class="text-xs text-gray-500 leading-5 mt-1">
+                    The document hash and digital signature are checked
+                    using the signer's public key.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Security -->
+    <div class="bg-white border border-lavender-200
+                rounded-xl p-6 mt-4">
+
+        <h2 class="text-base font-semibold text-gray-900">
+            Security technologies
+        </h2>
+
+        <div class="divide-y divide-gray-100 mt-3">
+
+            <div class="flex items-center justify-between py-3">
+
+                <div class="flex items-center gap-3">
+
+                    <i data-lucide="fingerprint"
+                       class="w-4 h-4 text-lavender-600"></i>
+
+                    <span class="text-sm text-gray-700">
+                        SHA-256
+                    </span>
+
+                </div>
+
+                <span class="text-xs text-gray-400">
+                    File integrity
+                </span>
+
+            </div>
+
+
+            <div class="flex items-center justify-between py-3">
+
+                <div class="flex items-center gap-3">
+
+                    <i data-lucide="key-round"
+                       class="w-4 h-4 text-lavender-600"></i>
+
+                    <span class="text-sm text-gray-700">
+                        Ed25519
+                    </span>
+
+                </div>
+
+                <span class="text-xs text-gray-400">
+                    Digital signatures
+                </span>
+
+            </div>
+
+
+            <div class="flex items-center justify-between py-3">
+
+                <div class="flex items-center gap-3">
+
+                    <i data-lucide="lock-keyhole"
+                       class="w-4 h-4 text-lavender-600"></i>
+
+                    <span class="text-sm text-gray-700">
+                        Fernet
+                    </span>
+
+                </div>
+
+                <span class="text-xs text-gray-400">
+                    Private-key protection
+                </span>
+
+            </div>
+
+
+            <div class="flex items-center justify-between py-3">
+
+                <div class="flex items-center gap-3">
+
+                    <i data-lucide="database"
+                       class="w-4 h-4 text-lavender-600"></i>
+
+                    <span class="text-sm text-gray-700">
+                        PostgreSQL
+                    </span>
+
+                </div>
+
+                <span class="text-xs text-gray-400">
+                    Application data
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Simple note -->
+    <div class="flex items-start gap-2.5
+                mt-4 px-1">
+
+        <i data-lucide="shield-alert"
+           class="w-4 h-4 text-lavender-600
+                  flex-shrink-0 mt-0.5"></i>
+
+        <p class="text-xs text-gray-500 leading-5">
+            A valid signature confirms that the signed content matches
+            the original content and that the signature can be verified
+            with the associated public key.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

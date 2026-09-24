@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block title %}Signature Certificate{% endblock %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto">
+
+    <!-- Back -->
+    <div class="mb-4">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="inline-flex items-center gap-1.5
+                  text-xs text-gray-500
+                  hover:text-lavender-700 transition">
+
+            <i data-lucide="arrow-left"
+               class="w-3.5 h-3.5"></i>
+
+            Dashboard
+
+        </a>
+
+    </div>
+
+
+    <!-- Certificate -->
+    <div class="bg-white border border-lavender-200
+                rounded-2xl overflow-hidden shadow-sm">
+
+        <!-- Certificate Header -->
+        <div class="bg-lavender-50
+                    border-b border-lavender-200
+                    px-6 py-5">
+
+            <div class="flex items-center justify-between gap-4">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-10 h-10 rounded-xl
+                                bg-lavender-600
+                                flex items-center justify-center">
+
+                        <i data-lucide="badge-check"
+                           class="w-5 h-5 text-white"></i>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-xs font-medium
+                                  text-lavender-700 uppercase
+                                  tracking-wider">
+
+                            Digital Certificate
+
+                        </p>
+
+                        <h1 class="text-lg font-semibold text-gray-900">
+                            Signature created
+                        </h1>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hidden sm:flex items-center gap-1.5
+                            px-2.5 py-1.5 rounded-full
+                            bg-green-50
+                            border border-green-100
+                            text-green-700 text-xs font-medium">
+
+                    <i data-lucide="circle-check"
+                       class="w-3.5 h-3.5"></i>
+
+                    Signed
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Certificate Body -->
+        <div class="p-6">
+
+            <!-- Document -->
+            <div class="flex items-center gap-3
+                        pb-5 border-b border-gray-100">
+
+                <div class="w-10 h-10 rounded-lg
+                            bg-lavender-100
+                            flex items-center justify-center">
+
+                    <i data-lucide="file"
+                       class="w-5 h-5 text-lavender-700"></i>
+
+                </div>
+
+                <div class="min-w-0">
+
+                    <p class="text-xs text-gray-400">
+                        Document
+                    </p>
+
+                    <p class="text-sm font-semibold text-gray-800
+                              truncate">
+
+                        {{ file.original_filename }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Details -->
+            <div class="grid grid-cols-1 sm:grid-cols-2
+                        gap-x-8 gap-y-5
+                        py-5 border-b border-gray-100">
+
+                <!-- Signed By -->
+                <div>
+
+                    <p class="text-xs text-gray-400">
+                        Signed by
+                    </p>
+
+                    <p class="text-sm font-medium text-gray-800 mt-1">
+                        {{ current_user.username }}
+                    </p>
+
+                </div>
+
+
+                <!-- Algorithm -->
+                <div>
+
+                    <p class="text-xs text-gray-400">
+                        Algorithm
+                    </p>
+
+                    <p class="text-sm font-medium text-gray-800 mt-1">
+                        {{ signature.algorithm }}
+                    </p>
+
+                </div>
+
+
+                <!-- Date -->
+                <div>
+
+                    <p class="text-xs text-gray-400">
+                        Signed on
+                    </p>
+
+                    <p class="text-sm font-medium text-gray-800 mt-1">
+                        {{ signature.created_at.strftime("%d %B %Y, %I:%M %p") }}
+                    </p>
+
+                </div>
+
+
+                <!-- Signature ID -->
+                <div>
+
+                    <p class="text-xs text-gray-400">
+                        Signature ID
+                    </p>
+
+                    <p class="text-sm font-medium text-gray-800 mt-1">
+                        SIG-{{ "%06d"|format(signature.id) }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Hash -->
+            <div class="py-5 border-b border-gray-100">
+
+                <div class="flex items-center justify-between gap-3">
+
+                    <p class="text-xs text-gray-400">
+                        SHA-256 document hash
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="copyText('file-hash', this)"
+                        class="inline-flex items-center gap-1
+                               text-xs text-lavender-700
+                               hover:text-lavender-800">
+
+                        <i data-lucide="copy"
+                           class="w-3.5 h-3.5"></i>
+
+                        Copy
+
+                    </button>
+
+                </div>
+
+
+                <div id="file-hash"
+                     class="mt-2 p-3 rounded-lg
+                            bg-gray-50
+                            border border-gray-100
+                            text-xs text-gray-600
+                            font-mono break-all">
+
+                    {{ file.file_hash }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Signature -->
+            <div class="py-5">
+
+                <div class="flex items-center justify-between gap-3">
+
+                    <p class="text-xs text-gray-400">
+                        Ed25519 digital signature
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="copyText('signature-value', this)"
+                        class="inline-flex items-center gap-1
+                               text-xs text-lavender-700
+                               hover:text-lavender-800">
+
+                        <i data-lucide="copy"
+                           class="w-3.5 h-3.5"></i>
+
+                        Copy
+
+                    </button>
+
+                </div>
+
+
+                <div id="signature-value"
+                     class="mt-2 p-3 rounded-lg
+                            bg-gray-50
+                            border border-gray-100
+                            text-xs text-gray-600
+                            font-mono break-all
+                            max-h-24 overflow-y-auto">
+
+                    {{ signature.signature }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-2">
+
+                <a href="{{ url_for('verify_file') }}"
+                   class="flex-1 h-10
+                          inline-flex items-center justify-center gap-2
+                          rounded-lg
+                          bg-lavender-600
+                          hover:bg-lavender-700
+                          text-white text-sm font-medium
+                          transition">
+
+                    <i data-lucide="shield-check"
+                       class="w-4 h-4"></i>
+
+                    Verify document
+
+                </a>
+
+                <a href="{{ url_for('download_certificate', signature_id=signature.id) }}"
+                class="inline-flex items-center justify-center gap-2
+                        h-10 px-4 rounded-lg
+                        bg-lavender-600 hover:bg-lavender-700
+                        text-white text-sm font-medium transition">
+
+                    <i data-lucide="download" class="w-4 h-4"></i>
+
+                    Download Certificate
+
+                </a>
+
+
+                <a href="{{ url_for('sign_file') }}"
+                   class="flex-1 h-10
+                          inline-flex items-center justify-center gap-2
+                          rounded-lg
+                          border border-gray-200
+                          bg-white
+                          hover:bg-gray-50
+                          text-gray-700 text-sm font-medium
+                          transition">
+
+                    <i data-lucide="file-signature"
+                       class="w-4 h-4"></i>
+
+                    Sign another
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Certificate Footer -->
+        <div class="px-6 py-3
+                    bg-gray-50
+                    border-t border-gray-100
+                    flex items-center justify-between">
+
+            <p class="text-[11px] text-gray-400">
+                Digital Signature & File Authentication
+            </p>
+
+            <div class="flex items-center gap-1.5
+                        text-[11px] text-gray-400">
+
+                <i data-lucide="shield-check"
+                   class="w-3.5 h-3.5"></i>
+
+                Ed25519
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+function copyText(elementId, button) {
+
+    const element = document.getElementById(elementId);
+
+    const text = element.innerText.trim();
+
+    navigator.clipboard.writeText(text);
+
+    const original = button.innerHTML;
+
+    button.innerHTML = `
+        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+        Copied
+    `;
+
+    lucide.createIcons();
+
+    setTimeout(() => {
+
+        button.innerHTML = original;
+
+        lucide.createIcons();
+
+    }, 1500);
+
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Document{% endblock %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-5">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="inline-flex items-center gap-1.5
+                  text-xs text-gray-500
+                  hover:text-lavender-700 transition">
+
+            <i data-lucide="arrow-left"
+               class="w-3.5 h-3.5"></i>
+
+            Dashboard
+
+        </a>
+
+        <div class="mt-4">
+
+            <h1 class="text-2xl font-semibold text-gray-900">
+                Verify a document
+            </h1>
+
+            <p class="text-sm text-gray-500 mt-1">
+                Check whether a document matches its digital signature.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Verification Card -->
+    <div class="bg-white border border-lavender-200
+                rounded-xl p-5 shadow-sm">
+
+        <form method="POST"
+              enctype="multipart/form-data"
+              id="verify-form">
+ 
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- File -->
+            <label for="file"
+                   id="drop-zone"
+                   class="relative flex flex-col items-center
+                          justify-center
+                          min-h-[190px]
+                          rounded-xl
+                          border-2 border-dashed
+                          border-lavender-200
+                          bg-lavender-50/50
+                          hover:bg-lavender-50
+                          hover:border-lavender-400
+                          cursor-pointer
+                          transition">
+
+                <input
+                    type="file"
+                    id="file"
+                    name="file"
+                    class="hidden"
+                    required
+                    accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg,.zip">
+
+
+                <div class="w-11 h-11 rounded-xl
+                            bg-white
+                            border border-lavender-200
+                            flex items-center justify-center
+                            shadow-sm">
+
+                    <i data-lucide="file-check"
+                       class="w-5 h-5 text-lavender-700"></i>
+
+                </div>
+
+
+                <h2 id="upload-title"
+                    class="text-sm font-semibold text-gray-800 mt-3">
+
+                    Select the document
+
+                </h2>
+
+
+                <p id="upload-description"
+                   class="text-xs text-gray-500 mt-1">
+
+                    Click to choose the file you want to verify
+
+                </p>
+
+
+                <p class="text-[11px] text-gray-400 mt-3">
+
+                    Maximum 10 MB
+
+                </p>
+                
+                <p id="upload-error"
+                class="hidden text-[11px] text-red-500 mt-2">
+                </p>
+            </label>
+
+
+            <!-- Selected File -->
+            <div id="file-info"
+                 class="hidden mt-3">
+
+                <div class="flex items-center gap-3
+                            rounded-lg
+                            border border-lavender-200
+                            bg-lavender-50
+                            px-4 py-3">
+
+                    <div class="w-8 h-8 rounded-lg
+                                bg-white
+                                border border-lavender-200
+                                flex items-center justify-center
+                                flex-shrink-0">
+
+                        <i data-lucide="file"
+                           class="w-4 h-4 text-lavender-700"></i>
+
+                    </div>
+
+                    <div class="min-w-0">
+
+                        <p id="file-name"
+                           class="text-sm font-medium text-gray-800 truncate">
+                        </p>
+
+                        <p id="file-size"
+                           class="text-xs text-gray-500 mt-0.5">
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Signature -->
+            <div class="mt-5">
+
+                <label for="signature"
+                       class="block text-sm font-medium text-gray-700 mb-1.5">
+
+                    Digital signature
+
+                </label>
+
+                <div class="relative">
+
+                    <i data-lucide="signature"
+                       class="absolute left-3 top-3
+                              w-4 h-4 text-gray-400"></i>
+
+                    <textarea
+                        id="signature"
+                        name="signature"
+                        rows="4"
+                        required
+                        placeholder="Paste the Ed25519 signature here..."
+                        class="w-full pl-10 pr-3 py-2.5
+                               rounded-lg
+                               border border-gray-200
+                               bg-gray-50
+                               text-xs text-gray-800
+                               font-mono
+                               placeholder-gray-400
+                               outline-none
+                               resize-none
+                               focus:bg-white
+                               focus:border-lavender-500
+                               focus:ring-2
+                               focus:ring-lavender-100
+                               transition"></textarea>
+
+                </div>
+
+                
+
+                <p class="text-[11px] text-gray-400 mt-1.5">
+                    Use the signature generated when the document was signed.
+                </p>
+
+            </div>
+
+
+            <!-- Submit -->
+            <button
+                type="submit"
+                id="verify-button"
+                class="w-full mt-5 h-10
+                       flex items-center justify-center gap-2
+                       rounded-lg
+                       bg-lavender-600
+                       hover:bg-lavender-700
+                       active:bg-lavender-800
+                       text-white
+                       text-sm font-medium
+                       transition">
+
+                <i data-lucide="shield-check"
+                   class="w-4 h-4"></i>
+
+                Verify document
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Small information -->
+    <div class="mt-4 flex items-start gap-2.5
+                px-1 text-xs text-gray-500">
+
+        <i data-lucide="info"
+           class="w-4 h-4 text-lavender-600 flex-shrink-0 mt-0.5"></i>
+
+        <p>
+            Verification checks both the digital signature and the
+            document's SHA-256 hash.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+const fileInput = document.getElementById("file");
+const fileInfo = document.getElementById("file-info");
+const fileName = document.getElementById("file-name");
+const fileSize = document.getElementById("file-size");
+
+const dropZone = document.getElementById("drop-zone");
+const uploadTitle = document.getElementById("upload-title");
+const uploadDescription = document.getElementById("upload-description");
+
+const verifyButton = document.getElementById("verify-button");
+
+
+function formatFileSize(bytes) {
+
+    if (bytes < 1024) {
+        return bytes + " B";
+    }
+
+    if (bytes < 1024 * 1024) {
+        return (bytes / 1024).toFixed(1) + " KB";
+    }
+
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+
+function showFile(file) {
+
+    if (!file) {
+        return;
+    }
+
+    const maxFileSize = 10 * 1024 * 1024;
+
+    const allowedExtensions = [
+        "pdf",
+        "txt",
+        "doc",
+        "docx",
+        "png",
+        "jpg",
+        "jpeg",
+        "zip"
+    ];
+
+    const uploadError = document.getElementById("upload-error");
+
+    const extension = file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    // Clear previous error
+    uploadError.textContent = "";
+    uploadError.classList.add("hidden");
+
+    // Invalid file type
+    if (!allowedExtensions.includes(extension)) {
+
+        uploadError.textContent =
+            "This file type is not allowed.";
+
+        uploadError.classList.remove("hidden");
+
+        clearFile();
+        return;
+    }
+
+    // File too large
+    if (file.size > maxFileSize) {
+
+        uploadError.textContent =
+            "File size must be 10 MB or smaller.";
+
+        uploadError.classList.remove("hidden");
+
+        clearFile();
+        return;
+    }
+
+    // Empty file
+    if (file.size === 0) {
+
+        uploadError.textContent =
+            "Empty files cannot be uploaded.";
+
+        uploadError.classList.remove("hidden");
+
+        clearFile();
+        return;
+    }
+
+    // Valid file
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+
+    fileInfo.classList.remove("hidden");
+
+    signButton.disabled = false;
+
+    uploadTitle.textContent = "Document selected";
+
+    uploadDescription.textContent =
+        "You can replace it by choosing another file.";
+
+    dropZone.classList.add(
+        "border-lavender-400",
+        "bg-lavender-50"
+    );
+}
+
+
+fileInput.addEventListener("change", function () {
+
+    if (this.files.length > 0) {
+        showFile(this.files[0]);
+    }
+
+});
+
+
+dropZone.addEventListener("dragover", function (event) {
+
+    event.preventDefault();
+
+    dropZone.classList.add(
+        "border-lavender-500",
+        "bg-lavender-100"
+    );
+
+});
+
+
+dropZone.addEventListener("dragleave", function () {
+
+    dropZone.classList.remove(
+        "border-lavender-500",
+        "bg-lavender-100"
+    );
+
+});
+
+
+dropZone.addEventListener("drop", function (event) {
+
+    event.preventDefault();
+
+    dropZone.classList.remove(
+        "border-lavender-500",
+        "bg-lavender-100"
+    );
+
+    const files = event.dataTransfer.files;
+
+    if (files.length > 0) {
+
+        fileInput.files = files;
+
+        showFile(files[0]);
+
+    }
+
+});
+
+
+document.getElementById("verify-form").addEventListener(
+    "submit",
+    function () {
+
+        verifyButton.disabled = true;
+
+        verifyButton.innerHTML = `
+            <i data-lucide="loader-circle"
+               class="w-4 h-4 animate-spin"></i>
+            Verifying document...
+        `;
+
+        lucide.createIcons();
+
+    }
+);
+
+</script>
+
+{% endblock %}

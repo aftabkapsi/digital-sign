@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+
+<div class="min-h-[calc(100vh-170px)] flex items-center justify-center py-4">
+
+    <div class="w-full max-w-sm">
+
+        <!-- Header -->
+        <div class="text-center mb-6">
+
+            <div class="w-11 h-11 mx-auto rounded-xl
+                        bg-lavender-600
+                        flex items-center justify-center">
+
+                <i data-lucide="file-signature"
+                   class="w-5 h-5 text-white"></i>
+
+            </div>
+
+            <h1 class="mt-4 text-2xl font-semibold text-gray-900">
+                Welcome back
+            </h1>
+
+            <p class="mt-1 text-sm text-gray-500">
+                Sign in to manage your documents.
+            </p>
+
+        </div>
+
+
+        <!-- Login Card -->
+        <div class="bg-white border border-lavender-200
+                    rounded-2xl shadow-sm p-6">
+
+            <form method="POST" class="space-y-4">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <!-- Email -->
+                <div>
+
+                    <label for="email"
+                           class="block text-sm font-medium text-gray-700 mb-1.5">
+                        Email
+                    </label>
+
+                    <div class="relative">
+
+                        <i data-lucide="mail"
+                           class="absolute left-3 top-1/2
+                                  -translate-y-1/2
+                                  w-4 h-4 text-gray-400"></i>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            autocomplete="email"
+                            placeholder="you@example.com"
+                            class="w-full h-10 pl-10 pr-3
+                                   rounded-lg
+                                   border border-gray-200
+                                   bg-gray-50
+                                   text-sm text-gray-900
+                                   placeholder-gray-400
+                                   outline-none
+                                   focus:bg-white
+                                   focus:border-lavender-500
+                                   focus:ring-2
+                                   focus:ring-lavender-100
+                                   transition">
+                    </div>
+
+                </div>
+
+
+                <!-- Password -->
+                <div>
+
+                    <div class="flex items-center justify-between mb-1.5">
+
+                        <label for="password"
+                               class="text-sm font-medium text-gray-700">
+                            Password
+                        </label>
+
+                    </div>
+
+                    <div class="relative">
+
+                        <i data-lucide="lock-keyhole"
+                           class="absolute left-3 top-1/2
+                                  -translate-y-1/2
+                                  w-4 h-4 text-gray-400"></i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                            placeholder="Enter your password"
+                            class="w-full h-10 pl-10 pr-10
+                                   rounded-lg
+                                   border border-gray-200
+                                   bg-gray-50
+                                   text-sm text-gray-900
+                                   placeholder-gray-400
+                                   outline-none
+                                   focus:bg-white
+                                   focus:border-lavender-500
+                                   focus:ring-2
+                                   focus:ring-lavender-100
+                                   transition">
+
+                        <button
+                            type="button"
+                            onclick="togglePassword()"
+                            class="absolute right-3 top-1/2
+                                   -translate-y-1/2
+                                   text-gray-400
+                                   hover:text-gray-600
+                                   transition"
+                            title="Show password">
+
+                            <i data-lucide="eye"
+                               id="password-icon"
+                               class="w-4 h-4"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Submit -->
+                <button
+                    type="submit"
+                    class="w-full h-10 mt-2
+                           flex items-center justify-center gap-2
+                           rounded-lg
+                           bg-lavender-600
+                           hover:bg-lavender-700
+                           active:bg-lavender-800
+                           text-white
+                           text-sm font-medium
+                           transition">
+
+                    <i data-lucide="log-in"
+                       class="w-4 h-4"></i>
+
+                    Sign in
+
+                </button>
+
+            </form>
+
+
+            <!-- Register -->
+            <div class="mt-5 pt-5 border-t border-gray-100 text-center">
+
+                <p class="text-sm text-gray-500">
+
+                    Don't have an account?
+
+                    <a href="{{ url_for('auth.register') }}"
+                       class="font-medium text-lavender-700
+                              hover:text-lavender-800">
+
+                        Create account
+
+                    </a>
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Small footer text -->
+        <p class="text-center text-xs text-gray-400 mt-4">
+            Secure document signing and verification
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+function togglePassword() {
+
+    const password = document.getElementById("password");
+    const icon = document.getElementById("password-icon");
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        icon.setAttribute("data-lucide", "eye-off");
+
+    } else {
+
+        password.type = "password";
+
+        icon.setAttribute("data-lucide", "eye");
+
+    }
+
+    lucide.createIcons();
+}
+
+</script>
+
+{% endblock %}

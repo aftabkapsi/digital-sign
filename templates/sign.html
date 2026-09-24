@@ -1,0 +1,434 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Document{% endblock %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-5">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="inline-flex items-center gap-1.5
+                  text-xs text-gray-500
+                  hover:text-lavender-700 transition">
+
+            <i data-lucide="arrow-left"
+               class="w-3.5 h-3.5"></i>
+
+            Dashboard
+
+        </a>
+
+        <div class="mt-4">
+
+            <h1 class="text-2xl font-semibold text-gray-900">
+                Sign a document
+            </h1>
+
+            <p class="text-sm text-gray-500 mt-1">
+                Upload a document to create a digital signature.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Upload Card -->
+    <div class="bg-white border border-lavender-200
+                rounded-xl p-5 shadow-sm">
+
+        <form method="POST"
+              enctype="multipart/form-data"
+              id="sign-form">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <!-- Drop Zone -->
+            <label for="file"
+                   id="drop-zone"
+                   class="relative flex flex-col items-center
+                          justify-center
+                          min-h-[230px]
+                          rounded-xl
+                          border-2 border-dashed
+                          border-lavender-200
+                          bg-lavender-50/50
+                          hover:bg-lavender-50
+                          hover:border-lavender-400
+                          cursor-pointer
+                          transition">
+
+                <input
+                    type="file"
+                    id="file"
+                    name="file"
+                    class="hidden"
+                    required
+                    accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg,.zip">
+
+
+                <!-- Upload Icon -->
+                <div id="upload-icon"
+                     class="w-12 h-12 rounded-xl
+                            bg-white
+                            border border-lavender-200
+                            flex items-center justify-center
+                            shadow-sm">
+
+                    <i data-lucide="upload"
+                       class="w-5 h-5 text-lavender-700"></i>
+
+                </div>
+
+
+                <h2 id="upload-title"
+                    class="text-sm font-semibold text-gray-800 mt-4">
+
+                    Drop your document here
+
+                </h2>
+
+
+                <p id="upload-description"
+                   class="text-xs text-gray-500 mt-1">
+
+                    or click to choose a file
+
+                </p>
+
+
+                <p class="text-[11px] text-gray-400 mt-3">
+
+                    PDF, DOC, DOCX, TXT, PNG, JPG or ZIP
+                    <span class="mx-1">•</span>
+                    Maximum 10 MB
+
+                </p>
+
+                <p id="upload-error"
+                class="hidden text-[11px] text-red-500 mt-2">
+                </p>
+
+            </label>
+
+
+            <!-- Selected File -->
+            <div id="file-info"
+                 class="hidden mt-4">
+
+                <div class="flex items-center justify-between
+                            gap-3
+                            rounded-lg
+                            border border-lavender-200
+                            bg-lavender-50
+                            px-4 py-3">
+
+                    <div class="flex items-center gap-3 min-w-0">
+
+                        <div class="w-9 h-9 rounded-lg
+                                    bg-white
+                                    border border-lavender-200
+                                    flex items-center justify-center
+                                    flex-shrink-0">
+
+                            <i data-lucide="file"
+                               class="w-4 h-4 text-lavender-700"></i>
+
+                        </div>
+
+                        <div class="min-w-0">
+
+                            <p id="file-name"
+                               class="text-sm font-medium text-gray-800 truncate">
+                            </p>
+
+                            <p id="file-size"
+                               class="text-xs text-gray-500 mt-0.5">
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="remove-file"
+                        class="w-8 h-8 rounded-lg
+                               flex items-center justify-center
+                               text-gray-400
+                               hover:bg-white
+                               hover:text-red-500
+                               transition"
+                        title="Remove file">
+
+                        <i data-lucide="x"
+                           class="w-4 h-4"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Sign Button -->
+            <button
+                type="submit"
+                id="sign-button"
+                disabled
+                class="w-full mt-5 h-10
+                       flex items-center justify-center gap-2
+                       rounded-lg
+                       bg-lavender-600
+                       hover:bg-lavender-700
+                       disabled:bg-gray-200
+                       disabled:text-gray-400
+                       disabled:cursor-not-allowed
+                       text-white
+                       text-sm font-medium
+                       transition">
+
+                <i data-lucide="file-signature"
+                   class="w-4 h-4"></i>
+
+                Create digital signature
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Small Information -->
+    <div class="mt-4 flex items-start gap-2.5
+                px-1 text-xs text-gray-500">
+
+        <i data-lucide="info"
+           class="w-4 h-4 text-lavender-600 flex-shrink-0 mt-0.5"></i>
+
+        <p>
+            Your file is hashed using SHA-256 and signed using
+            your Ed25519 private key.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+const fileInput = document.getElementById("file");
+const dropZone = document.getElementById("drop-zone");
+const fileInfo = document.getElementById("file-info");
+const fileName = document.getElementById("file-name");
+const fileSize = document.getElementById("file-size");
+const signButton = document.getElementById("sign-button");
+const removeFile = document.getElementById("remove-file");
+
+const uploadTitle = document.getElementById("upload-title");
+const uploadDescription = document.getElementById("upload-description");
+
+
+function formatFileSize(bytes) {
+
+    if (bytes < 1024) {
+        return bytes + " B";
+    }
+
+    if (bytes < 1024 * 1024) {
+        return (bytes / 1024).toFixed(1) + " KB";
+    }
+
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+
+function showFile(file) {
+
+    if (!file) {
+        return;
+    }
+
+    const maxFileSize = 10 * 1024 * 1024;
+
+    const allowedExtensions = [
+        "pdf",
+        "txt",
+        "doc",
+        "docx",
+        "png",
+        "jpg",
+        "jpeg",
+        "zip"
+    ];
+
+    const uploadError = document.getElementById("upload-error");
+
+    const extension = file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    // Clear previous error
+    uploadError.textContent = "";
+    uploadError.classList.add("hidden");
+
+    // Invalid file type
+    if (!allowedExtensions.includes(extension)) {
+
+        uploadError.textContent =
+            "This file type is not allowed.";
+
+        uploadError.classList.remove("hidden");
+
+        clearFile();
+        return;
+    }
+
+    // File too large
+    if (file.size > maxFileSize) {
+
+        uploadError.textContent =
+            "File size must be 10 MB or smaller.";
+
+        uploadError.classList.remove("hidden");
+
+        clearFile();
+        return;
+    }
+
+    // Empty file
+    if (file.size === 0) {
+
+        uploadError.textContent =
+            "Empty files cannot be uploaded.";
+
+        uploadError.classList.remove("hidden");
+
+        clearFile();
+        return;
+    }
+
+    // Valid file
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+
+    fileInfo.classList.remove("hidden");
+
+    signButton.disabled = false;
+
+    uploadTitle.textContent = "Document selected";
+
+    uploadDescription.textContent =
+        "You can replace it by choosing another file.";
+
+    dropZone.classList.add(
+        "border-lavender-400",
+        "bg-lavender-50"
+    );
+}
+
+function clearFile() {
+
+    fileInput.value = "";
+
+    fileInfo.classList.add("hidden");
+
+    signButton.disabled = true;
+
+    uploadTitle.textContent = "Drop your document here";
+
+    uploadDescription.textContent =
+        "or click to choose a file";
+
+    dropZone.classList.remove(
+        "border-lavender-400",
+        "bg-lavender-50"
+    );
+}
+
+
+fileInput.addEventListener("change", function () {
+
+    if (this.files.length > 0) {
+        showFile(this.files[0]);
+    }
+
+});
+
+
+removeFile.addEventListener("click", function () {
+    clearFile();
+});
+
+
+dropZone.addEventListener("dragover", function (event) {
+
+    event.preventDefault();
+
+    dropZone.classList.add(
+        "border-lavender-500",
+        "bg-lavender-100"
+    );
+
+});
+
+
+dropZone.addEventListener("dragleave", function () {
+
+    dropZone.classList.remove(
+        "border-lavender-500",
+        "bg-lavender-100"
+    );
+
+});
+
+
+dropZone.addEventListener("drop", function (event) {
+
+    event.preventDefault();
+
+    dropZone.classList.remove(
+        "border-lavender-500",
+        "bg-lavender-100"
+    );
+
+    const files = event.dataTransfer.files;
+
+    if (files.length > 0) {
+
+        fileInput.files = files;
+
+        showFile(files[0]);
+
+    }
+
+});
+
+
+document.getElementById("sign-form").addEventListener("submit", function () {
+
+    signButton.disabled = true;
+
+    signButton.innerHTML = `
+        <i data-lucide="loader-circle"
+           class="w-4 h-4 animate-spin"></i>
+        Creating signature...
+    `;
+
+    lucide.createIcons();
+
+});
+
+</script>
+
+{% endblock %}
