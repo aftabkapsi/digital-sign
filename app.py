@@ -110,7 +110,7 @@ app.register_blueprint(auth)
 
 @app.route("/")
 def home():
-    return "Digital Signature System is running."
+    return redirect(url_for("auth.login"))
 
 
 # --------------------------------------------------
