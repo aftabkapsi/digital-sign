@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{% block title %}Digital Signature{% endblock %}</title>
-
+    <link rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='favicon.svg') }}">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -235,25 +237,21 @@
 
 
     <!-- Footer -->
-    <footer class="border-t border-lavender-200 bg-white mt-8">
+    <footer class="border-t border-gray-100 mt-8">
+        <div class="max-w-6xl mx-auto px-4 py-4
+                    flex flex-col sm:flex-row
+                    items-center justify-between
+                    gap-2">
 
-        <div class="max-w-6xl mx-auto px-5 py-4">
+            <p class="text-xs text-gray-400">
+                © aftabkapsi 2026. All rights reserved.
+            </p>
 
-            <div class="flex flex-col sm:flex-row
-                        items-center justify-between gap-2">
-
-                <p class="text-xs text-gray-500">
-                    Digital Signature & File Authentication
-                </p>
-
-                <p class="text-xs text-gray-400">
-                    Secure document verification
-                </p>
-
-            </div>
+            <p class="text-xs text-gray-400">
+                Secure digital document authentication
+            </p>
 
         </div>
-
     </footer>
 
 
